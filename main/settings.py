@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
     'drf_yasg',
 
+    # local apps
+    'users',
+    'blogs',
 ]
 
 SITE_ID = 1
