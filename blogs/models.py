@@ -25,7 +25,6 @@ class Blog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=OPTIONS, default='d')
     slug = models.SlugField(blank=True)
-
     def __str__(self):
         return self.title
     

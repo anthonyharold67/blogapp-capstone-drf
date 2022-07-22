@@ -53,9 +53,25 @@ class CategoryView(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
-class CommentView(ModelViewSet):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+# class CommentView(ModelViewSet):
+#     queryset = Comment.objects.all()
+#     serializer_class = CommentSerializer
+    
+@api_view(['GET',"POST"])
+def comment_list(request,pk):
+    queryset = Comment.objects.filter(post=pk) 
+    serializer = CommentSerializer(queryset, many=True)
+    if request.method == 'GET':
+        comments = Comment.objects.filter(post=pk)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = CommentSerializer(data=request.data)
+        post = get_object_or_404(Blog, pk=pk)
+        if serializer.is_valid():
+            serializer.save(post=post,user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
 @api_view(['GET','POST'])
 def like(request, pk):

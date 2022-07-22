@@ -11,9 +11,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('name',)
 
 class CommentSerializer(serializers.ModelSerializer):
+    user=serializers.StringRelatedField(read_only=True)
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ("user","content","id")
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,9 +28,10 @@ class BlogSerializer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField()
     post_views = serializers.SerializerMethodField()
     author = serializers.StringRelatedField()
+    comment_count=serializers.SerializerMethodField()
     class Meta:
         model = Blog
-        fields = ('id', 'title', 'content', 'image', 'category', 'publish_date', 'author', 'status', 'slug', 'comments', 'likes','post_views')
+        fields = ('id', 'title', 'content', 'image', 'category', 'publish_date', 'author', 'status', 'slug', 'comments', 'likes','post_views',"comment_count")
     
     def create(self, validated_data):
         author = User.objects.get(username=self.context['request'].user)
@@ -42,4 +44,6 @@ class BlogSerializer(serializers.ModelSerializer):
     def get_post_views(self, obj):
         return PostView.objects.filter(post=obj).count()
     
+    def get_comment_count(self, obj):
+        return Comment.objects.filter(post=obj).count()
         
