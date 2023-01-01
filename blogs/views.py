@@ -4,10 +4,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .models import Blog, Category, Comment, Like, PostView
 from .serializers import BlogSerializer, CategorySerializer, CommentSerializer, LikeSerializer
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
+from django.contrib.auth import get_user_model
 
-from django.contrib.auth.models import User
+User = get_user_model()
+
 # Create your views here.
 class BlogView(ModelViewSet):
     queryset = Blog.objects.all()
@@ -22,9 +23,6 @@ class BlogView(ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-
-        if getattr(instance, '_prefetched_objects_cache', None):
-            instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
     def perform_update(self, serializer):
@@ -41,11 +39,12 @@ class BlogView(ModelViewSet):
     def perform_destroy(self, instance):
         instance.delete()
     
-    
-    
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        PostView.objects.create(post=instance,user=request.user)
+       
+        view_qs = PostView.objects.filter(user=request.user, post=instance)
+        if not view_qs.exists():
+            PostView.objects.create(post=instance,user=request.user)
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 

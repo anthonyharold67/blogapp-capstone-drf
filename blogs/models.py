@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -18,7 +20,7 @@ class Blog(models.Model):
   
     title = models.CharField(max_length=100)    
     content = models.TextField()
-    image = models.URLField(blank=True)
+    image = models.URLField(max_length=400,blank=True)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, blank=True, null=True)
     publish_date = models.DateTimeField(auto_now_add=True)
     # last_updated = models.DateTimeField(auto_now=True)
