@@ -20,7 +20,8 @@ class BlogView(ModelViewSet):
 
     def get_queryset(self):
         user_id=self.request.query_params.get("author")
-        if user_id:
+        pk = self.kwargs.get('pk')
+        if user_id or pk:
             queryset= Blog.objects.all()
             return queryset
         return super().get_queryset()
@@ -50,6 +51,7 @@ class BlogView(ModelViewSet):
         instance.delete()
     
     def retrieve(self, request, *args, **kwargs):
+        queryset= Blog.objects.all()
         instance = self.get_object()
        
         view_qs = PostView.objects.filter(user=request.user, post=instance)
