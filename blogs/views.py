@@ -12,11 +12,18 @@ User = get_user_model()
 
 # Create your views here.
 class BlogView(ModelViewSet):
-    queryset = Blog.objects.all()
+    queryset = Blog.objects.filter(status="p")
     serializer_class = BlogSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['author']
     # permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user_id=self.request.query_params.get("author")
+        if user_id:
+            queryset= Blog.objects.all()
+            return queryset
+        return super().get_queryset()
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
