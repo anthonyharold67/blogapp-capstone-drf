@@ -6,6 +6,7 @@ from .models import Blog, Category, Comment, Like, PostView
 from .serializers import BlogSerializer, CategorySerializer, CommentSerializer, LikeSerializer
 from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
 
 User = get_user_model()
 
@@ -13,6 +14,8 @@ User = get_user_model()
 class BlogView(ModelViewSet):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['author']
     # permission_classes = (IsAuthenticated,)
 
     def update(self, request, *args, **kwargs):

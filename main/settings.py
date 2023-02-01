@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'drf_yasg',
     "corsheaders",
+    'django_filters',
 
     # local apps
     'users',
